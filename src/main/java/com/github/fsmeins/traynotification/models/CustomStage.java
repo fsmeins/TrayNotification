@@ -2,7 +2,6 @@ package com.github.fsmeins.traynotification.models;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -44,7 +43,7 @@ public class CustomStage extends Stage {
         setY(loc.getY());
     }
 
-    private SimpleDoubleProperty xLocationProperty = new SimpleDoubleProperty() {
+    private final SimpleDoubleProperty xLocationProperty = new SimpleDoubleProperty() {
         @Override
         public void set(double newValue) {
             setX(newValue);
@@ -60,7 +59,7 @@ public class CustomStage extends Stage {
         return xLocationProperty;
     }
 
-    private SimpleDoubleProperty yLocationProperty = new SimpleDoubleProperty() {
+    private final SimpleDoubleProperty yLocationProperty = new SimpleDoubleProperty() {
         @Override
         public void set(double newValue) {
             setY(newValue);

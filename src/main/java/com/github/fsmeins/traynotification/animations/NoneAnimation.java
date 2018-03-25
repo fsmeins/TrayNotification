@@ -1,6 +1,7 @@
 package com.github.fsmeins.traynotification.animations;
 
 import com.github.fsmeins.traynotification.models.CustomStage;
+import javafx.animation.KeyFrame;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
@@ -27,7 +28,9 @@ public class NoneAnimation implements TrayAnimation {
 
     private Timeline setupDismissAnimation() {
         final Timeline tl = new Timeline();
-
+        KeyFrame frame1 = new KeyFrame(Duration.ZERO);
+        KeyFrame frame2 = new KeyFrame(Duration.millis(1));
+        tl.getKeyFrames().addAll(frame1, frame2);
         tl.setOnFinished(e ->
         {
             trayIsShowing = false;

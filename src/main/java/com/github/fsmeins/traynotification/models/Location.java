@@ -2,7 +2,8 @@ package com.github.fsmeins.traynotification.models;
 
 public class Location {
 
-    private double x, y;
+    private final double x;
+    private final double y;
 
     public Location(double xLoc, double yLoc) {
         this.x = xLoc;
