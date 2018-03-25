@@ -1,4 +1,4 @@
-package tray.animations;
+package com.github.fsmeins.traynotification.animations;
 
 import javafx.util.Duration;
 

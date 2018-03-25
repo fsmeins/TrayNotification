@@ -1,20 +1,19 @@
-package tray.notification;
+package com.github.fsmeins.traynotification.notification;
 
+import com.github.fsmeins.traynotification.animations.*;
+import com.github.fsmeins.traynotification.models.CustomStage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Pane;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import tray.animations.*;
-import tray.models.CustomStage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,13 +21,15 @@ import java.net.URL;
 public final class TrayNotification {
 
     @FXML
-    private Label lblTitle, lblMessage, lblClose;
+    private Label lblTitle, lblMessage;
+    @FXML
+    private Button lblClose;
     @FXML
     private ImageView imageIcon;
     @FXML
-    private Rectangle rectangleColor;
+    private Pane rectangleColor;
     @FXML
-    private AnchorPane rootNode;
+    private Pane rootNode;
 
     private CustomStage stage;
     private NotificationType notificationType;
@@ -39,12 +40,13 @@ public final class TrayNotification {
 
     /**
      * Initializes an instance of the tray notification object
-     * @param title The title text to assign to the tray
-     * @param body The body text to assign to the tray
-     * @param img The image to show on the tray
+     *
+     * @param title         The title text to assign to the tray
+     * @param body          The body text to assign to the tray
+     * @param img           The image to show on the tray
      * @param rectangleFill The fill for the rectangle
      */
-    public TrayNotification(String title, String body, Image img, Paint rectangleFill) {
+    public TrayNotification(String title, String body, Image img, String rectangleFill) {
         initTrayNotification(title, body, NotificationType.CUSTOM);
 
         setImage(img);
@@ -53,11 +55,12 @@ public final class TrayNotification {
 
     /**
      * Initializes an instance of the tray notification object
-     * @param title The title text to assign to the tray
-     * @param body The body text to assign to the tray
+     *
+     * @param title            The title text to assign to the tray
+     * @param body             The body text to assign to the tray
      * @param notificationType The notification type to assign to the tray
      */
-    public TrayNotification(String title, String body, NotificationType notificationType ) {
+    public TrayNotification(String title, String body, NotificationType notificationType) {
         initTrayNotification(title, body, notificationType);
     }
 
@@ -71,7 +74,7 @@ public final class TrayNotification {
     private void initTrayNotification(String title, String message, NotificationType type) {
 
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/tray/views/TrayNotification.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/TrayNotification.fxml"));
 
             fxmlLoader.setController(this);
             fxmlLoader.load();
@@ -89,7 +92,7 @@ public final class TrayNotification {
     private void initAnimations() {
 
         animationProvider =
-            new AnimationProvider(new FadeAnimation(stage), new SlideAnimation(stage), new PopupAnimation(stage));
+                new AnimationProvider(new FadeAnimation(stage), new SlideAnimation(stage), new PopupAnimation(stage), new NoneAnimation(stage));
 
         //Default animation type
         setAnimationType(AnimationType.SLIDE);
@@ -101,6 +104,7 @@ public final class TrayNotification {
         stage.setScene(new Scene(rootNode));
         stage.setAlwaysOnTop(true);
         stage.setLocation(stage.getBottomRight());
+        stage.getScene().getStylesheets().add("/views/style.css");
 
         lblClose.setOnMouseClicked(e -> dismiss());
     }
@@ -115,27 +119,27 @@ public final class TrayNotification {
         switch (nType) {
 
             case INFORMATION:
-                imageLocation = getClass().getResource("/tray/resources/info.png");
+                imageLocation = getClass().getResource("/images/info.png");
                 paintHex = "#2C54AB";
                 break;
 
             case NOTICE:
-                imageLocation = getClass().getResource("/tray/resources/notice.png");
+                imageLocation = getClass().getResource("/images/notice.png");
                 paintHex = "#8D9695";
                 break;
 
             case SUCCESS:
-                imageLocation = getClass().getResource("/tray/resources/success.png");
+                imageLocation = getClass().getResource("/images/success.png");
                 paintHex = "#009961";
                 break;
 
             case WARNING:
-                imageLocation = getClass().getResource("/tray/resources/warning.png");
+                imageLocation = getClass().getResource("/images/warning.png");
                 paintHex = "#E23E0A";
                 break;
 
             case ERROR:
-                imageLocation = getClass().getResource("/tray/resources/error.png");
+                imageLocation = getClass().getResource("/images/error.png");
                 paintHex = "#CC0033";
                 break;
 
@@ -143,7 +147,7 @@ public final class TrayNotification {
                 return;
         }
 
-        setRectangleFill(Paint.valueOf(paintHex));
+        setRectangleFill(paintHex);
         setImage(new Image(imageLocation.toString()));
         setTrayIcon(imageIcon.getImage());
     }
@@ -158,7 +162,7 @@ public final class TrayNotification {
         setNotificationType(type);
     }
 
-    public void setTray(String title, String message, Image img, Paint rectangleFill, AnimationType animType) {
+    public void setTray(String title, String message, Image img, String rectangleFill, AnimationType animType) {
         setTitle(title);
         setMessage(message);
         setImage(img);
@@ -172,6 +176,7 @@ public final class TrayNotification {
 
     /**
      * Shows and dismisses the tray notification
+     *
      * @param dismissDelay How long to delay the start of the dismiss animation
      */
     public void showAndDismiss(Duration dismissDelay) {
@@ -193,7 +198,7 @@ public final class TrayNotification {
      */
     public void showAndWait() {
 
-        if (! isTrayShowing()) {
+        if (!isTrayShowing()) {
             stage.show();
 
             animator.playShowAnimation();
@@ -225,22 +230,25 @@ public final class TrayNotification {
 
     /**
      * Sets an action event for when the tray has been dismissed
+     *
      * @param event The event to occur when the tray has been dismissed
      */
     public void setOnDismiss(EventHandler<ActionEvent> event) {
-        onDismissedCallBack  = event;
+        onDismissedCallBack = event;
     }
 
     /**
      * Sets an action event for when the tray has been shown
+     *
      * @param event The event to occur after the tray has been shown
      */
     public void setOnShown(EventHandler<ActionEvent> event) {
-        onShownCallback  = event;
+        onShownCallback = event;
     }
 
     /**
      * Sets a new task bar image for the tray
+     *
      * @param img The image to assign
      */
     public void setTrayIcon(Image img) {
@@ -254,6 +262,7 @@ public final class TrayNotification {
 
     /**
      * Sets a title to the tray
+     *
      * @param txt The text to assign to the tray icon
      */
     public void setTitle(String txt) {
@@ -266,6 +275,7 @@ public final class TrayNotification {
 
     /**
      * Sets the message for the tray notification
+     *
      * @param txt The text to assign to the body of the tray notification
      */
     public void setMessage(String txt) {
@@ -276,7 +286,7 @@ public final class TrayNotification {
         return lblMessage.getText();
     }
 
-    public void setImage (Image img) {
+    public void setImage(Image img) {
         imageIcon.setImage(img);
 
         setTrayIcon(img);
@@ -286,12 +296,9 @@ public final class TrayNotification {
         return imageIcon.getImage();
     }
 
-    public void setRectangleFill(Paint value) {
-        rectangleColor.setFill(value);
-    }
-
-    public Paint getRectangleFill() {
-        return rectangleColor.getFill();
+    public void setRectangleFill(final String color)
+    {
+        rectangleColor.setStyle("-fx-background-color: " + color + ';');
     }
 
     public void setAnimationType(AnimationType type) {

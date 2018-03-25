@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="87.0" prefWidth="461.0" style="-fx-border-color: gray; -fx-border-width: 1;"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.layout.Region?>
+<HBox fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="87.0" prefWidth="461.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Rectangle fx:id="rectangleColor" arcHeight="5.0" arcWidth="5.0" fill="GREY" height="85.0" layoutX="1.0"
-                   layoutY="1.0" stroke="GREY" strokeType="INSIDE" style="-fx-arc-width: 0;" width="32.0"/>
-        <ImageView fx:id="imageIcon" fitHeight="67.0" fitWidth="67.0" layoutX="47.0" layoutY="9.0" pickOnBounds="true"/>
-        <Label fx:id="lblTitle" layoutX="126.0" layoutY="9.0" text="Title:" wrapText="true">
-            <font>
-                <Font name="System Bold" size="16.0"/>
-            </font>
-        </Label>
-        <Label fx:id="lblMessage" layoutX="126.0" layoutY="52.0" text="Message:" wrapText="true">
-            <font>
-                <Font size="13.0"/>
-            </font>
-        </Label>
-        <Label fx:id="lblClose" layoutX="441.0" text="x">
-            <font>
-                <Font size="20.0"/>
-            </font>
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </Label>
+        <Pane fx:id="rectangleColor" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="32.0"/>
+        <ImageView fx:id="imageIcon" fitHeight="67.0" fitWidth="67.0" pickOnBounds="true">
+            <HBox.margin>
+                <Insets bottom="11.0" left="11.0" right="11.0" top="11.0" />
+            </HBox.margin>
+        </ImageView>
+        <VBox maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+            <children>
+                <Label fx:id="lblTitle" maxWidth="1.7976931348623157E308" text="Title:" wrapText="true">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                    <padding>
+                        <Insets top="10.0" />
+                    </padding>
+                </Label>
+                <Label fx:id="lblMessage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Message:" wrapText="true" VBox.vgrow="ALWAYS">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+        <Button fx:id="lblClose" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+            <graphic>
+                <Region fx:id="icon" />
+            </graphic>
+        </Button>
     </children>
-</AnchorPane>
+</HBox>

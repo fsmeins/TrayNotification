@@ -1,8 +1,9 @@
-package tray.models;
+package com.github.fsmeins.traynotification.models;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -11,7 +12,7 @@ public class CustomStage extends Stage {
 
     private final Location bottomRight;
 
-    public CustomStage(AnchorPane ap, StageStyle style) {
+    public CustomStage(Pane ap, StageStyle style) {
         initStyle(style);
 
         setSize(ap.getPrefWidth(), ap.getPrefHeight());

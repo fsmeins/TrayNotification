@@ -1,4 +1,4 @@
-package tray.notification;
+package com.github.fsmeins.traynotification.notification;
 
 public enum NotificationType {
     INFORMATION,

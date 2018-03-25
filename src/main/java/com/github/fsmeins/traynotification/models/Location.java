@@ -1,4 +1,4 @@
-package tray.models;
+package com.github.fsmeins.traynotification.models;
 
 public class Location {
 

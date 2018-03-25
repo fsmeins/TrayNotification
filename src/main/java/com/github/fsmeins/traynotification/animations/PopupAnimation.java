@@ -1,7 +1,7 @@
-package tray.animations;
+package com.github.fsmeins.traynotification.animations;
 
+import com.github.fsmeins.traynotification.models.CustomStage;
 import javafx.animation.*;
-import tray.models.CustomStage;
 import javafx.util.Duration;
 
 public class PopupAnimation implements TrayAnimation {
@@ -26,10 +26,10 @@ public class PopupAnimation implements TrayAnimation {
         Timeline tl = new Timeline();
 
         KeyValue kv1 = new KeyValue(stage.yLocationProperty(), stage.getY() + stage.getWidth());
-        KeyFrame kf1 = new KeyFrame(Duration.millis(2000), kv1);
+        KeyFrame kf1 = new KeyFrame(Duration.millis(1000), kv1);
 
         KeyValue kv2 = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame kf2 = new KeyFrame(Duration.millis(2000), kv2);
+        KeyFrame kf2 = new KeyFrame(Duration.millis(1000), kv2);
 
         tl.getKeyFrames().addAll(kf1, kf2);
 
