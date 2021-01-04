@@ -6,125 +6,125 @@ import javafx.util.Duration;
 
 public class SlideAnimation implements TrayAnimation {
 
-    private final Timeline showAnimation, dismissAnimation;
-    private final SequentialTransition sq;
-    private final CustomStage stage;
-    private boolean trayIsShowing;
+  private final Timeline showAnimation, dismissAnimation;
+  private final SequentialTransition sq;
+  private final CustomStage stage;
+  private boolean trayIsShowing;
 
-    public SlideAnimation(CustomStage customStage) {
+  public SlideAnimation(CustomStage customStage) {
 
-        this.stage = customStage;
+    this.stage = customStage;
 
-        showAnimation = setupShowAnimation();
-        dismissAnimation = setupDismissAnimation();
+    showAnimation = setupShowAnimation();
+    dismissAnimation = setupDismissAnimation();
 
-        //It wouldn't allow me to play embedded animations so I had to create two separate
-        //Instances so I could play sequentially and individually.
+    //It wouldn't allow me to play embedded animations so I had to create two separate
+    //Instances so I could play sequentially and individually.
 
-        sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
-    }
+    sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
+  }
 
-    private Timeline setupShowAnimation() {
+  /**
+   * The type of animation this class plays
+   *
+   * @return The type of animation this class plays
+   */
+  @Override
+  public AnimationType getAnimationType() {
+    return AnimationType.SLIDE;
+  }
 
-        Timeline tl = new Timeline();
+  /**
+   * Plays both the show and dismiss animation using a sequential transition object
+   *
+   * @param dismissDelay How long to delay the start of the dismiss animation
+   */
+  @Override
+  public void playSequential(Duration dismissDelay) {
+    sq.getChildren().get(1).setDelay(dismissDelay);
+    sq.play();
+  }
 
-        //Sets the x location of the tray off the screen
-        double offScreenX = stage.getOffScreenBounds().getX();
-        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX);
-        KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvX);
+  /**
+   * Plays the implemented show animation
+   */
+  @Override
+  public void playShowAnimation() {
+    showAnimation.play();
+  }
 
-        //Animates the Tray onto the screen and interpolates at a tangent for 300 millis
-        Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
-        KeyValue kvInter = new KeyValue(stage.xLocationProperty(), stage.getBottomRight().getX(), interpolator);
-        KeyFrame frame2 = new KeyFrame(Duration.millis(1300), kvInter);
+  /**
+   * Plays the implemented dismiss animation
+   */
+  @Override
+  public void playDismissAnimation() {
+    dismissAnimation.play();
+  }
 
-        //Sets opacity to 0 instantly
-        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame frame3 = new KeyFrame(Duration.ZERO, kvOpacity);
+  /**
+   * Signifies if the tray is current showing
+   *
+   * @return boolean resultant
+   */
+  @Override
+  public boolean isShowing() {
+    return trayIsShowing;
+  }
 
-        //Increases the opacity to fully visible whilst moving in the space of 1000 millis
-        KeyValue kvOpacity2 = new KeyValue(stage.opacityProperty(), 1.0);
-        KeyFrame frame4 = new KeyFrame(Duration.millis(1000), kvOpacity2);
+  private Timeline setupShowAnimation() {
 
-        tl.getKeyFrames().addAll(frame1, frame2, frame3, frame4);
+    Timeline tl = new Timeline();
 
-        tl.setOnFinished(e -> trayIsShowing = true);
+    //Sets the x location of the tray off the screen
+    double offScreenX = stage.getOffScreenBounds().getX();
+    KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX);
+    KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvX);
 
-        return tl;
-    }
+    //Animates the Tray onto the screen and interpolates at a tangent for 300 millis
+    Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
+    KeyValue kvInter = new KeyValue(stage.xLocationProperty(), stage.getBottomRight().getX(), interpolator);
+    KeyFrame frame2 = new KeyFrame(Duration.millis(1300), kvInter);
 
-    private Timeline setupDismissAnimation() {
+    //Sets opacity to 0 instantly
+    KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
+    KeyFrame frame3 = new KeyFrame(Duration.ZERO, kvOpacity);
 
-        Timeline tl = new Timeline();
+    //Increases the opacity to fully visible whilst moving in the space of 1000 millis
+    KeyValue kvOpacity2 = new KeyValue(stage.opacityProperty(), 1.0);
+    KeyFrame frame4 = new KeyFrame(Duration.millis(1000), kvOpacity2);
 
-        double offScreenX = stage.getOffScreenBounds().getX();
-        Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
-        double trayPadding = 3;
+    tl.getKeyFrames().addAll(frame1, frame2, frame3, frame4);
 
-        //The destination X location for the stage. Which is off the users screen
-        //Since the tray has some padding, we want to hide that too
-        KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX + trayPadding, interpolator);
-        KeyFrame frame1 = new KeyFrame(Duration.millis(1400), kvX);
+    tl.setOnFinished(e -> trayIsShowing = true);
 
-        //Change the opacity level to 0.4 over the duration of 2000 millis
-        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.4);
-        KeyFrame frame2 = new KeyFrame(Duration.millis(2000), kvOpacity);
+    return tl;
+  }
 
-        tl.getKeyFrames().addAll(frame1, frame2);
+  private Timeline setupDismissAnimation() {
 
-        tl.setOnFinished(e -> {
-            trayIsShowing = false;
-            stage.close();
-            stage.setLocation(stage.getBottomRight());
-        });
+    Timeline tl = new Timeline();
 
-        return tl;
-    }
+    double offScreenX = stage.getOffScreenBounds().getX();
+    Interpolator interpolator = Interpolator.TANGENT(Duration.millis(300), 50);
+    double trayPadding = 3;
 
-    /**
-     * The type of animation this class plays
-     *
-     * @return The type of animation this class plays
-     */
-    @Override
-    public AnimationType getAnimationType() {
-        return AnimationType.SLIDE;
-    }
+    //The destination X location for the stage. Which is off the users screen
+    //Since the tray has some padding, we want to hide that too
+    KeyValue kvX = new KeyValue(stage.xLocationProperty(), offScreenX + trayPadding, interpolator);
+    KeyFrame frame1 = new KeyFrame(Duration.millis(1400), kvX);
 
-    /**
-     * Plays both the show and dismiss animation using a sequential transition object
-     *
-     * @param dismissDelay How long to delay the start of the dismiss animation
-     */
-    @Override
-    public void playSequential(Duration dismissDelay) {
-        sq.getChildren().get(1).setDelay(dismissDelay);
-        sq.play();
-    }
+    //Change the opacity level to 0.4 over the duration of 2000 millis
+    KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.4);
+    KeyFrame frame2 = new KeyFrame(Duration.millis(2000), kvOpacity);
 
-    /**
-     * Plays the implemented show animation
-     */
-    @Override
-    public void playShowAnimation() {
-        showAnimation.play();
-    }
+    tl.getKeyFrames().addAll(frame1, frame2);
 
-    /**
-     * Plays the implemented dismiss animation
-     */
-    @Override
-    public void playDismissAnimation() {
-        dismissAnimation.play();
-    }
+    tl.setOnFinished(e -> {
+      trayIsShowing = false;
+      stage.close();
+      stage.setLocation(stage.getBottomRight());
+    });
 
-    /**
-     * Signifies if the tray is current showing
-     *
-     * @return boolean resultant
-     */
-    @Override
-    public boolean isShowing() {
-        return trayIsShowing;
-    }
+    return tl;
+  }
 }

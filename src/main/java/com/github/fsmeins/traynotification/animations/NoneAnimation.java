@@ -7,63 +7,63 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 public class NoneAnimation implements TrayAnimation {
-    private final Timeline showAnimation, dismissAnimation;
-    private final SequentialTransition sq;
-    private final CustomStage stage;
-    private boolean trayIsShowing;
+  private final Timeline showAnimation, dismissAnimation;
+  private final SequentialTransition sq;
+  private final CustomStage stage;
+  private boolean trayIsShowing;
 
-    public NoneAnimation(CustomStage s) {
-        this.stage = s;
-        showAnimation = setupShowAnimation();
-        dismissAnimation = setupDismissAnimation();
-        sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
-    }
+  public NoneAnimation(CustomStage s) {
+    this.stage = s;
+    showAnimation = setupShowAnimation();
+    dismissAnimation = setupDismissAnimation();
+    sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
+  }
 
-    private Timeline setupShowAnimation() {
-        final Timeline tl = new Timeline();
-        tl.setOnFinished(e -> trayIsShowing = true);
+  @Override
+  public AnimationType getAnimationType() {
+    return AnimationType.NONE;
+  }
 
-        return tl;
-    }
+  @Override
+  public void playSequential(Duration dismissDelay) {
+    sq.getChildren().get(1).setDelay(dismissDelay);
+    sq.play();
+  }
 
-    private Timeline setupDismissAnimation() {
-        final Timeline tl = new Timeline();
-        KeyFrame frame1 = new KeyFrame(Duration.ZERO);
-        KeyFrame frame2 = new KeyFrame(Duration.millis(1));
-        tl.getKeyFrames().addAll(frame1, frame2);
-        tl.setOnFinished(e ->
-        {
-            trayIsShowing = false;
-            stage.close();
-            stage.setLocation(stage.getBottomRight());
-        });
+  @Override
+  public void playShowAnimation() {
+    showAnimation.play();
+  }
 
-        return tl;
-    }
+  @Override
+  public void playDismissAnimation() {
+    dismissAnimation.play();
+  }
 
-    @Override
-    public AnimationType getAnimationType() {
-        return AnimationType.NONE;
-    }
+  @Override
+  public boolean isShowing() {
+    return trayIsShowing;
+  }
 
-    @Override
-    public void playSequential(Duration dismissDelay) {
-        sq.getChildren().get(1).setDelay(dismissDelay);
-        sq.play();
-    }
+  private Timeline setupShowAnimation() {
+    final Timeline tl = new Timeline();
+    tl.setOnFinished(e -> trayIsShowing = true);
 
-    @Override
-    public void playShowAnimation() {
-        showAnimation.play();
-    }
+    return tl;
+  }
 
-    @Override
-    public void playDismissAnimation() {
-        dismissAnimation.play();
-    }
+  private Timeline setupDismissAnimation() {
+    final Timeline tl = new Timeline();
+    KeyFrame frame1 = new KeyFrame(Duration.ZERO);
+    KeyFrame frame2 = new KeyFrame(Duration.millis(1));
+    tl.getKeyFrames().addAll(frame1, frame2);
+    tl.setOnFinished(e ->
+    {
+      trayIsShowing = false;
+      stage.close();
+      stage.setLocation(stage.getBottomRight());
+    });
 
-    @Override
-    public boolean isShowing() {
-        return trayIsShowing;
-    }
+    return tl;
+  }
 }

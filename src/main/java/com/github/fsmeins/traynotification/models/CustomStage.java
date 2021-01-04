@@ -9,69 +9,67 @@ import javafx.stage.StageStyle;
 
 public class CustomStage extends Stage {
 
-    private final Location bottomRight;
-
-    public CustomStage(Pane ap, StageStyle style) {
-        initStyle(style);
-
-        setSize(ap.getPrefWidth(), ap.getPrefHeight());
-
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double x = screenBounds.getMinX() + screenBounds.getWidth() - ap.getPrefWidth() - 2;
-        double y = screenBounds.getMinY() + screenBounds.getHeight() - ap.getPrefHeight() - 2;
-
-        bottomRight = new Location(x,y);
+  private final Location bottomRight;
+  private final SimpleDoubleProperty xLocationProperty = new SimpleDoubleProperty() {
+    @Override
+    public void set(double newValue) {
+      setX(newValue);
     }
 
-    public Location getBottomRight() {
-        return bottomRight;
+    @Override
+    public double get() {
+      return getX();
+    }
+  };
+  private final SimpleDoubleProperty yLocationProperty = new SimpleDoubleProperty() {
+    @Override
+    public void set(double newValue) {
+      setY(newValue);
     }
 
-    public void setSize(double width, double height) {
-        setWidth(width);
-        setHeight(height);
+    @Override
+    public double get() {
+      return getY();
     }
+  };
 
-    public Location getOffScreenBounds() {
-        Location loc = getBottomRight();
+  public CustomStage(Pane ap, StageStyle style) {
+    initStyle(style);
 
-        return new Location(loc.getX() + this.getWidth(), loc.getY());
-    }
+    setSize(ap.getPrefWidth(), ap.getPrefHeight());
 
-    public void setLocation(Location loc) {
-        setX(loc.getX());
-        setY(loc.getY());
-    }
+    Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+    double x = screenBounds.getMinX() + screenBounds.getWidth() - ap.getPrefWidth() - 2;
+    double y = screenBounds.getMinY() + screenBounds.getHeight() - ap.getPrefHeight() - 2;
 
-    private final SimpleDoubleProperty xLocationProperty = new SimpleDoubleProperty() {
-        @Override
-        public void set(double newValue) {
-            setX(newValue);
-        }
+    bottomRight = new Location(x, y);
+  }
 
-        @Override
-        public double get() {
-            return getX();
-        }
-    };
+  public Location getBottomRight() {
+    return bottomRight;
+  }
 
-    public SimpleDoubleProperty xLocationProperty() {
-        return xLocationProperty;
-    }
+  public void setSize(double width, double height) {
+    setWidth(width);
+    setHeight(height);
+  }
 
-    private final SimpleDoubleProperty yLocationProperty = new SimpleDoubleProperty() {
-        @Override
-        public void set(double newValue) {
-            setY(newValue);
-        }
+  public Location getOffScreenBounds() {
+    Location loc = getBottomRight();
 
-        @Override
-        public double get() {
-            return getY();
-        }
-    };
+    return new Location(loc.getX() + this.getWidth(), loc.getY());
+  }
 
-    public SimpleDoubleProperty yLocationProperty() {
-        return yLocationProperty;
-    }
+  public void setLocation(Location loc) {
+    setX(loc.getX());
+    setY(loc.getY());
+  }
+
+  public SimpleDoubleProperty xLocationProperty() {
+    return xLocationProperty;
+  }
+
+  public SimpleDoubleProperty yLocationProperty() {
+    return yLocationProperty;
+  }
 }

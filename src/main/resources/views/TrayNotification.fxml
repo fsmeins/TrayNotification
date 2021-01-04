@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Font?>
 <HBox fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="87.0" prefWidth="461.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Pane fx:id="rectangleColor" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="32.0"/>
+        <Pane fx:id="rectangleColor" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="12.0"/>
         <ImageView fx:id="imageIcon" fitHeight="67.0" fitWidth="67.0" pickOnBounds="true">
             <HBox.margin>
                 <Insets bottom="11.0" left="11.0" right="11.0" top="11.0" />

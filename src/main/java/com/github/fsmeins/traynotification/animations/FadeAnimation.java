@@ -9,121 +9,120 @@ import javafx.util.Duration;
 
 public class FadeAnimation implements TrayAnimation {
 
-    private final Timeline showAnimation, dismissAnimation;
-    private final SequentialTransition sq;
-    private final CustomStage stage;
-    private boolean trayIsShowing;
+  private final Timeline showAnimation, dismissAnimation;
+  private final SequentialTransition sq;
+  private final CustomStage stage;
+  private boolean trayIsShowing;
 
-    /**
-     * Initializes a fade type animation on a stage
-     * @param customStage The stage associate the fade animation with
-     */
-    public FadeAnimation(CustomStage customStage) {
+  /**
+   * Initializes a fade type animation on a stage
+   *
+   * @param customStage The stage associate the fade animation with
+   */
+  public FadeAnimation(CustomStage customStage) {
 
-        this.stage = customStage;
+    this.stage = customStage;
 
-        //It wouldn't allow me to play embedded animations so I had to create two separate
-        //Instances so I could play sequentially and individually.
+    //It wouldn't allow me to play embedded animations so I had to create two separate
+    //Instances so I could play sequentially and individually.
 
-        showAnimation = setupShowAnimation();
-        dismissAnimation = setupDismissAnimation();
+    showAnimation = setupShowAnimation();
+    dismissAnimation = setupDismissAnimation();
 
-        sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
-    }
+    sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
+  }
 
-    /**
-     *
-     * @return a constructed instance of a show fade animation
-     */
-    private Timeline setupShowAnimation() {
+  /**
+   * The type of animation this class plays
+   *
+   * @return The type of animation this class plays
+   */
+  @Override
+  public AnimationType getAnimationType() {
+    return AnimationType.FADE;
+  }
 
-        Timeline tl = new Timeline();
+  /**
+   * Plays both the show and dismiss animation using a sequential transition object
+   *
+   * @param dismissDelay How long to delay the start of the dismiss animation
+   */
+  @Override
+  public void playSequential(Duration dismissDelay) {
+    sq.getChildren().get(1).setDelay(dismissDelay);
+    sq.play();
+  }
 
-        //Sets opacity to 0.0 instantly which is pretty much invisible
-        KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvOpacity);
+  /**
+   * Plays the implemented show animation
+   */
+  @Override
+  public void playShowAnimation() {
+    showAnimation.play();
+  }
 
-        //Sets opacity to 1.0 (fully visible) over the time of 300 milliseconds.
-        KeyValue kvOpacity2 = new KeyValue(stage.opacityProperty(), 1.0);
-        KeyFrame frame2 = new KeyFrame(Duration.millis(300), kvOpacity2);
+  /**
+   * Plays the implemented dismiss animation
+   */
+  @Override
+  public void playDismissAnimation() {
+    dismissAnimation.play();
+  }
 
-        tl.getKeyFrames().addAll(frame1, frame2);
+  /**
+   * Signifies if the tray is current showing
+   *
+   * @return boolean resultant
+   */
+  @Override
+  public boolean isShowing() {
+    return trayIsShowing;
+  }
 
-        tl.setOnFinished(e -> trayIsShowing = true);
+  /**
+   * @return a constructed instance of a show fade animation
+   */
+  private Timeline setupShowAnimation() {
 
-        return tl;
-    }
+    Timeline tl = new Timeline();
 
-    /**
-     *
-     * @return a constructed instance of a dismiss fade animation
-     */
-    private Timeline setupDismissAnimation() {
+    //Sets opacity to 0.0 instantly which is pretty much invisible
+    KeyValue kvOpacity = new KeyValue(stage.opacityProperty(), 0.0);
+    KeyFrame frame1 = new KeyFrame(Duration.ZERO, kvOpacity);
 
-        Timeline tl = new Timeline();
+    //Sets opacity to 1.0 (fully visible) over the time of 300 milliseconds.
+    KeyValue kvOpacity2 = new KeyValue(stage.opacityProperty(), 1.0);
+    KeyFrame frame2 = new KeyFrame(Duration.millis(300), kvOpacity2);
 
-        //At this stage the opacity is already at 1.0
+    tl.getKeyFrames().addAll(frame1, frame2);
 
-        //Lowers the opacity to 0.0 within 200 milliseconds
-        KeyValue kv1 = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame kf1 = new KeyFrame(Duration.millis(200), kv1);
+    tl.setOnFinished(e -> trayIsShowing = true);
 
-        tl.getKeyFrames().addAll(kf1);
+    return tl;
+  }
 
-        //Action to be performed when the animation has finished
-        tl.setOnFinished(e -> {
-            trayIsShowing = false;
-            stage.close();
-            stage.setLocation(stage.getBottomRight());
-        });
+  /**
+   * @return a constructed instance of a dismiss fade animation
+   */
+  private Timeline setupDismissAnimation() {
 
-        return tl;
-    }
+    Timeline tl = new Timeline();
 
-    /**
-     * The type of animation this class plays
-     *
-     * @return The type of animation this class plays
-     */
-    @Override
-    public AnimationType getAnimationType() {
-        return AnimationType.FADE;
-    }
+    //At this stage the opacity is already at 1.0
 
-    /**
-     * Plays both the show and dismiss animation using a sequential transition object
-     *
-     * @param dismissDelay How long to delay the start of the dismiss animation
-     */
-    @Override
-    public void playSequential(Duration dismissDelay) {
-        sq.getChildren().get(1).setDelay(dismissDelay);
-        sq.play();
-    }
+    //Lowers the opacity to 0.0 within 200 milliseconds
+    KeyValue kv1 = new KeyValue(stage.opacityProperty(), 0.0);
+    KeyFrame kf1 = new KeyFrame(Duration.millis(200), kv1);
 
-    /**
-     * Plays the implemented show animation
-     */
-    @Override
-    public void playShowAnimation() {
-        showAnimation.play();
-    }
+    tl.getKeyFrames().addAll(kf1);
 
-    /**
-     * Plays the implemented dismiss animation
-     */
-    @Override
-    public void playDismissAnimation() {
-        dismissAnimation.play();
-    }
+    //Action to be performed when the animation has finished
+    tl.setOnFinished(e -> {
+      trayIsShowing = false;
+      stage.close();
+      stage.setLocation(stage.getBottomRight());
+    });
 
-    /**
-     * Signifies if the tray is current showing
-     *
-     * @return boolean resultant
-     */
-    @Override
-    public boolean isShowing() {
-        return trayIsShowing;
-    }
+    return tl;
+  }
 }

@@ -1,114 +1,117 @@
 package com.github.fsmeins.traynotification.animations;
 
 import com.github.fsmeins.traynotification.models.CustomStage;
-import javafx.animation.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 public class PopupAnimation implements TrayAnimation {
 
-    private final Timeline showAnimation, dismissAnimation;
-    private final SequentialTransition sq;
-    private final CustomStage stage;
-    private boolean trayIsShowing;
+  private final Timeline showAnimation, dismissAnimation;
+  private final SequentialTransition sq;
+  private final CustomStage stage;
+  private boolean trayIsShowing;
 
-    public PopupAnimation(CustomStage s) {
+  public PopupAnimation(CustomStage s) {
 
-        this.stage = s;
+    this.stage = s;
 
-        showAnimation = setupShowAnimation();
-        dismissAnimation = setupDismissAnimation();
+    showAnimation = setupShowAnimation();
+    dismissAnimation = setupDismissAnimation();
 
-        sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
-    }
+    sq = new SequentialTransition(setupShowAnimation(), setupDismissAnimation());
+  }
 
-    private Timeline setupDismissAnimation() {
+  /**
+   * The type of animation this class plays
+   *
+   * @return The type of animation this class plays
+   */
+  @Override
+  public AnimationType getAnimationType() {
+    return AnimationType.POPUP;
+  }
 
-        Timeline tl = new Timeline();
+  /**
+   * Plays both the show and dismiss animation using a sequential transition object
+   *
+   * @param dismissDelay How long to delay the start of the dismiss animation
+   */
+  @Override
+  public void playSequential(Duration dismissDelay) {
+    sq.getChildren().get(1).setDelay(dismissDelay);
+    sq.play();
+  }
 
-        KeyValue kv1 = new KeyValue(stage.yLocationProperty(), stage.getY() + stage.getWidth());
-        KeyFrame kf1 = new KeyFrame(Duration.millis(1000), kv1);
+  /**
+   * Plays the implemented show animation
+   */
+  @Override
+  public void playShowAnimation() {
+    showAnimation.play();
+  }
 
-        KeyValue kv2 = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame kf2 = new KeyFrame(Duration.millis(1000), kv2);
+  /**
+   * Plays the implemented dismiss animation
+   */
+  @Override
+  public void playDismissAnimation() {
+    dismissAnimation.play();
+  }
 
-        tl.getKeyFrames().addAll(kf1, kf2);
+  /**
+   * Signifies if the tray is current showing
+   *
+   * @return boolean resultant
+   */
+  @Override
+  public boolean isShowing() {
+    return trayIsShowing;
+  }
 
-        tl.setOnFinished(e -> {
-            trayIsShowing = false;
-            stage.close();
-            stage.setLocation(stage.getBottomRight());
-        });
+  private Timeline setupDismissAnimation() {
 
-        return tl;
-    }
+    Timeline tl = new Timeline();
 
-    private Timeline setupShowAnimation() {
+    KeyValue kv1 = new KeyValue(stage.yLocationProperty(), stage.getY() + stage.getWidth());
+    KeyFrame kf1 = new KeyFrame(Duration.millis(1000), kv1);
 
-        Timeline tl = new Timeline();
+    KeyValue kv2 = new KeyValue(stage.opacityProperty(), 0.0);
+    KeyFrame kf2 = new KeyFrame(Duration.millis(1000), kv2);
 
-        KeyValue kv1 = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY() + stage.getWidth());
-        KeyFrame kf1 = new KeyFrame(Duration.ZERO, kv1);
+    tl.getKeyFrames().addAll(kf1, kf2);
 
-        KeyValue kv2 = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY());
-        KeyFrame kf2 = new KeyFrame(Duration.millis(1000), kv2);
+    tl.setOnFinished(e -> {
+      trayIsShowing = false;
+      stage.close();
+      stage.setLocation(stage.getBottomRight());
+    });
 
-        KeyValue kv3 = new KeyValue(stage.opacityProperty(), 0.0);
-        KeyFrame kf3 = new KeyFrame(Duration.ZERO, kv3);
+    return tl;
+  }
 
-        KeyValue kv4 = new KeyValue(stage.opacityProperty(), 1.0);
-        KeyFrame kf4 = new KeyFrame(Duration.millis(2000), kv4);
+  private Timeline setupShowAnimation() {
 
-        tl.getKeyFrames().addAll(kf1, kf2, kf3, kf4);
+    Timeline tl = new Timeline();
 
-        tl.setOnFinished(e -> trayIsShowing = true);
+    KeyValue kv1 = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY() + stage.getWidth());
+    KeyFrame kf1 = new KeyFrame(Duration.ZERO, kv1);
 
-        return tl;
-    }
+    KeyValue kv2 = new KeyValue(stage.yLocationProperty(), stage.getBottomRight().getY());
+    KeyFrame kf2 = new KeyFrame(Duration.millis(1000), kv2);
 
-    /**
-     * The type of animation this class plays
-     *
-     * @return The type of animation this class plays
-     */
-    @Override
-    public AnimationType getAnimationType() {
-        return AnimationType.POPUP;
-    }
+    KeyValue kv3 = new KeyValue(stage.opacityProperty(), 0.0);
+    KeyFrame kf3 = new KeyFrame(Duration.ZERO, kv3);
 
-    /**
-     * Plays both the show and dismiss animation using a sequential transition object
-     *
-     * @param dismissDelay How long to delay the start of the dismiss animation
-     */
-    @Override
-    public void playSequential(Duration dismissDelay) {
-        sq.getChildren().get(1).setDelay(dismissDelay);
-        sq.play();
-    }
+    KeyValue kv4 = new KeyValue(stage.opacityProperty(), 1.0);
+    KeyFrame kf4 = new KeyFrame(Duration.millis(2000), kv4);
 
-    /**
-     * Plays the implemented show animation
-     */
-    @Override
-    public void playShowAnimation() {
-        showAnimation.play();
-    }
+    tl.getKeyFrames().addAll(kf1, kf2, kf3, kf4);
 
-    /**
-     * Plays the implemented dismiss animation
-     */
-    @Override
-    public void playDismissAnimation() {
-        dismissAnimation.play();
-    }
+    tl.setOnFinished(e -> trayIsShowing = true);
 
-    /**
-     * Signifies if the tray is current showing
-     *
-     * @return boolean resultant
-     */
-    @Override
-    public boolean isShowing() {
-        return trayIsShowing;
-    }
+    return tl;
+  }
 }
